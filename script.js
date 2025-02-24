@@ -10,6 +10,23 @@ const ipAdress = ip.address();
 
 // node script.js
 
+const table = {
+    0: { tool: 'tournevis', locker: 1, isOpen: false },
+    1: { tool: 'marteau', locker: 2, isOpen: false },
+    2: { tool: 'clé', locker: 3, isOpen: false }
+}
+
+const tableJ = JSON.stringify(table, null, 2);
+console.log(tableJ);
+
+app.get('/', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(tableJ);
+});
+
+
+
+
 
 // Stocker les clients connectés par type
 const clients = {
