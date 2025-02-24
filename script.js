@@ -2,11 +2,26 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const ip  = require('ip');
+const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
-const ipAdress = ip.address();  
+//const io = socketIo(server);
+const ipAdress = ip.address(); 
+const { Server } = require("socket.io"); // Import de socket.io pour le serveur
+
+app.use(cors({
+    //origin: "http://127.0.0.1:5500", // Autorise uniquement cette origine
+    origin: "*", // Autorise uniquement cette origine
+    methods: ["GET", "POST"]
+}));
+
+const io = new Server(server, {
+    cors: {
+        origin: "*", // 🔹 Autorise uniquement les connexions depuis ton navigateur
+        methods: ["GET", "POST"]
+    }
+});
 
 // node script.js
 
@@ -23,7 +38,6 @@ app.get('/', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(tableJ);
 });
-
 
 
 
