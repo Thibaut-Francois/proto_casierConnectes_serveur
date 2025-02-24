@@ -56,6 +56,20 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Un client est connecté');
 
+    // Envoyer la table actuelle au client qui vient de se connecter
+    socket.emit("updateTable", table);
+
+    // Écouter les demandes de mise à jour de la table
+    socket.on("updateLocker", ({ id, isOpen }) => {
+        if (table[id]) {
+            table[id].isOpen = isOpen; // Modifier la valeur
+            console.log(`Casier ${id} mis à jour :`, table[id]);
+
+            // Envoyer la mise à jour à tous les clients
+            io.emit("updateTable", table);
+        }
+    });
+
     // Écouter les messages du client
     socket.on('message', (data) => {
         console.log('Message reçu du client:', data);
