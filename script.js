@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
     // Écouter les lecture de carte
     socket.on("lectureCarte", (data) => {
-        io.emit("currentCard", table);
+        io.emit("currentCard", data);
     });
 
     // Écouter les messages du client
