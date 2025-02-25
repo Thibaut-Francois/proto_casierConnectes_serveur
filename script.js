@@ -26,9 +26,9 @@ const io = new Server(server, {
 // node script.js
 
 const table = {
-    0: { tool: 'tournevis', locker: 1, isOpen: false },
-    1: { tool: 'marteau', locker: 2, isOpen: false },
-    2: { tool: 'clé', locker: 3, isOpen: false }
+    0: { tool: 'tournevis', locker: 1, isOpen: false, user: "" },
+    1: { tool: 'marteau', locker: 2, isOpen: false, user: "" },
+    2: { tool: 'clé', locker: 3, isOpen: false, user: "" },
 }
 
 const tableJ = JSON.stringify(table, null, 2);
@@ -45,7 +45,8 @@ app.get('/', (req, res) => {
 // Stocker les clients connectés par type
 const clients = {
     clientTablette: null,
-    clientServoMoteur: null
+    clientServoMoteur: null,
+    clientRFID: null
 };
 
 app.get('/', (req, res) => {
@@ -68,6 +69,22 @@ io.on('connection', (socket) => {
             // Envoyer la mise à jour à tous les clients
             io.emit("updateTable", table);
         }
+    });
+
+        // Écouter les demandes de mise à jour de la table
+    socket.on("updateLocker", ({ id, isOpen }) => {
+        if (table[id]) {
+            table[id].isOpen = isOpen; // Modifier la valeur
+            console.log(`Casier ${id} mis à jour :`, table[id]);
+
+            // Envoyer la mise à jour à tous les clients
+            io.emit("updateTable", table);
+        }
+    });
+
+    // Écouter les lecture de carte
+    socket.on("lectureCarte", (data) => {
+        io.emit("currentCard", table);
     });
 
     // Écouter les messages du client
